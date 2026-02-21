@@ -31,10 +31,15 @@ def analyze_pr(request: PRRequest):
     )
 
     results = []
+    full_review_text = "## 🤖 AI Code Review Report\n\n"
 
     for file in files:
         static_result = analyze_code(file["code"])
         llm_result = review_with_llm(file["code"])
+
+        full_review_text += f"### 📄 {file['filename']}\n\n"
+        full_review_text += f"**Static Analysis:**\n{static_result}\n\n"
+        full_review_text += f"**LLM Review:**\n{llm_result}\n\n---\n\n"
 
         results.append({
             "filename": file["filename"],
@@ -42,9 +47,18 @@ def analyze_pr(request: PRRequest):
             "llm_review": llm_result
         })
 
+    # Post comment to PR
+    from app.github_service import post_pr_comment
+    post_pr_comment(
+        request.owner,
+        request.repo,
+        request.pr_number,
+        full_review_text
+    )
+
     return {
-        "total_files": len(results),
-        "results": results
+        "message": "Review posted to PR successfully.",
+        "total_files": len(results)
     }
 
 
