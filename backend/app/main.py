@@ -69,7 +69,7 @@ def analyze_pr(request: PRRequest):
 async def github_webhook(request: Request):
     payload = await request.json()
 
-    # Only handle pull request events
+    # Only pull request
     if payload.get("action") in ["opened", "synchronize"]:
         pr = payload.get("pull_request")
         repo = payload.get("repository")
@@ -86,7 +86,7 @@ async def github_webhook(request: Request):
             static_result = analyze_code(file["code"])
             try:
                 llm_result = review_with_llm(file["code"])
-            except Exception as e:
+            except:
                 llm_result = "LLM unavailable. Static analysis only"
 
             full_review_text += f"###{file['filename']}\n\n"
