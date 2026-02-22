@@ -31,7 +31,7 @@ def analyze_pr(request: PRRequest):
     )
 
     results = []
-    full_review_text = "## 🤖 AI Code Review Report\n\n"
+    full_review_text = "AI Code Review Report\n\n"
 
     for file in files:
         static_result = analyze_code(file["code"])
@@ -40,7 +40,7 @@ def analyze_pr(request: PRRequest):
         except Exception as e:
             llm_result = "LLM unavailable. Static analysis only"
 
-        full_review_text += f"### 📄 {file['filename']}\n\n"
+        full_review_text += f"{file['filename']}\n\n"
         full_review_text += f"**Static Analysis:**\n{static_result}\n\n"
         full_review_text += f"**LLM Review:**\n{llm_result}\n\n---\n\n"
 
@@ -89,7 +89,7 @@ async def github_webhook(request: Request):
             except:
                 llm_result = "LLM unavailable. Static analysis only"
 
-            full_review_text += f"###{file['filename']}\n\n"
+            full_review_text += f"**{file['filename']}**\n\n"
             full_review_text += f"**Static Analysis:**\n{static_result}\n\n"
             full_review_text += f"**LLM Review:**\n{llm_result}\n\n---\n\n"
 
