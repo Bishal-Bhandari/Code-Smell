@@ -80,7 +80,7 @@ async def github_webhook(request: Request):
 
         files = get_pr_files(owner, repo_name, pr_number)
 
-        full_review_text = "## AI Code Review Report\n\n"
+        full_review_text = "AI Code Review Report\n\n"
 
         for file in files:
             static_result = analyze_code(file["code"])
