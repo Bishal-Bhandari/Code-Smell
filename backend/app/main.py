@@ -35,7 +35,10 @@ def analyze_pr(request: PRRequest):
 
     for file in files:
         static_result = analyze_code(file["code"])
-        llm_result = review_with_llm(file["code"])
+        try:
+            llm_result = review_with_llm(file["code"])
+        except Exception as e:
+            llm_result = "LLM unavailable. Static analysis only"
 
         full_review_text += f"### 📄 {file['filename']}\n\n"
         full_review_text += f"**Static Analysis:**\n{static_result}\n\n"
