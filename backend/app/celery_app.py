@@ -1,5 +1,4 @@
 from celery import Celery
-import app.tasks
 
 # Celery instance
 celery = Celery(
