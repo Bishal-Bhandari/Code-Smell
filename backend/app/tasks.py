@@ -2,11 +2,15 @@ from app.celery_app import celery
 from app.github_service import get_pr_files, post_pr_comment
 from app.analyzer import analyze_code
 from app.llm_service import review_with_llm
+from app.db import pr_collection
+from datetime import datetime
 
 @celery.task
 def process_pr(owner, repo_name, pr_number):
     files = get_pr_files(owner, repo_name, pr_number)
     full_review_text = "AI Code Review Report\n\n"
+
+    analysis_results = []
 
     for file in files:
         static_result = analyze_code(file["code"])
