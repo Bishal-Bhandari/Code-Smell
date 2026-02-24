@@ -5,3 +5,11 @@ services:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+
+  mongo:
+    image: mongo:6.0
+    container_name: ai_code_mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - /media/bishal/DATA1/Project/Python/ai-code-reviewer/data/db:/data/db
