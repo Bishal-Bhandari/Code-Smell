@@ -1,7 +1,6 @@
 # AI Code Review & Technical Debt Analyzer
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
-![Django](https://img.shields.io/badge/Django-Backend-green)
 ![FastAPI](https://img.shields.io/badge/FastAPI-Analysis%20Engine-teal)
 ![React](https://img.shields.io/badge/React-Frontend-61DAFB)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Database-brightgreen)
@@ -65,7 +64,7 @@ flowchart TB
     end
 
     subgraph Backend
-        B1[Django - Auth + Repo Management]
+        B1[FastAPI - Auth + Repo Management]
         B2[FastAPI - Code Analyzer]
         B3[Celery Worker]
         B4[Redis]
