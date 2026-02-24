@@ -19,8 +19,25 @@ def process_pr(owner, repo_name, pr_number):
         except:
             llm_result = "LLM unavailable. Static analysis only"
 
+        analysis_results.append({
+            "filename": file["filename"],
+            "static_analysis": static_result,
+            "llm_review": llm_result
+        })
+
         full_review_text += f"**{file['filename']}**\n\n"
         full_review_text += f"**Static Analysis:**\n{static_result}\n\n"
         full_review_text += f"**LLM Review:**\n{llm_result}\n\n---\n\n"
 
+     # post comment on github
     post_pr_comment(owner, repo_name, pr_number, full_review_text)
+
+    # save to MongoDB
+    pr_collection.insert_one({
+        "owner": owner,
+        "repo": repo_name,
+        "pr_number": pr_number,
+        "files": analysis_results,
+        "review_comment": full_review_text,
+        "timestamp": datetime.utcnow()
+    })
