@@ -6,8 +6,17 @@ from .analysis_engine.tasks import process_pr
 from .github_service.github_service import get_pr_files, post_pr_comment
 from .schemas.schemas import CodeRequest, PRRequest
 from .db_service.query import get_pr_history
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Root Endpoint
 @app.get("/")
