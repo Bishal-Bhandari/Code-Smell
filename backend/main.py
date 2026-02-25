@@ -77,8 +77,6 @@ async def github_webhook(request: Request):
 # Dashboard Endpoint 
 @app.get("/dashboard/pr-history/{owner}/{repo}")
 def dashboard_pr_history(owner: str, repo: str, limit: int = 10):
-    """
-    Returns last `limit` PR analyses for a repo
-    """
+
     results = get_pr_history(owner, repo, limit)
     return {"total": len(results), "prs": results}
