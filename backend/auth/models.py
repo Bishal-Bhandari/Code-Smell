@@ -14,3 +14,10 @@ def create_user(email, password_hash, subscription="free", api_key=None):
         "usage_count": 0,
         "created_at": datetime.utcnow()
     }
+    return users_collection.insert_one(user)
+
+def get_user_by_email(email):
+    return users_collection.find_one({"email": email})
+
+def increment_usage(user_id):
+    users_collection.update_one({"_id": ObjectId(user_id)}, {"$inc": {"usage_count": 1}})
