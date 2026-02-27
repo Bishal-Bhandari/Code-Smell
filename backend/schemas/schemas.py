@@ -8,7 +8,7 @@ class PRRequest(BaseModel):
     repo: str
     pr_number: int
 
-# Signup/Login
+# signup/login
 class UserBase(BaseModel):
     email: str
 
@@ -18,12 +18,12 @@ class UserCreate(UserBase):
 class UserLogin(UserBase):
     password: str
 
-# JWT token
+# jwt token
 class Token(BaseModel):
     access_token: str
     token_type: str = "bearer"
 
-# Subscription
+# subscription
 class SubscriptionCheck(BaseModel):
     subscription: str
     usage_count: int
