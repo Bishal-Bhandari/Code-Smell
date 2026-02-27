@@ -8,7 +8,8 @@ def create_user(email, password_hash, subscription="free", api_key=None):
     user = {
         "email": email,
         "password": password_hash,
-        "subscription": subscription,  # free / pro / enterprise
+        "subscription": subscription,
+        # free / pro / enterprise  
         "api_key": api_key,
         "usage_count": 0,
         "created_at": datetime.utcnow()
