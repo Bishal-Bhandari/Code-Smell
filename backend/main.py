@@ -1,5 +1,5 @@
 # backend/main.py
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Depends
 from .analysis_engine.analyzer import analyze_code
 from .analysis_engine.llm_service import review_with_llm
 from .analysis_engine.tasks import process_pr
@@ -7,6 +7,9 @@ from .github_service.github_service import get_pr_files, post_pr_comment
 from .schemas.schemas import CodeRequest, PRRequest
 from .db_service.query import get_pr_history
 from fastapi.middleware.cors import CORSMiddleware
+from .auth.subscription import validate_usage
+from .auth.auth_routes import router as auth_router
+from .auth.dependencies import verify_token
 
 app = FastAPI()
 
@@ -83,9 +86,13 @@ async def github_webhook(request: Request):
 
     return {"status": "Task queued"}
 
+# Auth routes
+app.include_router(auth_router, prefix="/auth", tags=["auth"])
 # Dashboard Endpoint 
 @app.get("/dashboard/pr-history/{owner}/{repo}")
-def dashboard_pr_history(owner: str, repo: str, limit: int = 10):
-
+def dashboard_pr_history(owner: str, repo: str, limit: int = 10, user=Depends(verify_token)):
+    # check subscription and usage
+    validate_usage(user)  
     results = get_pr_history(owner, repo, limit)
     return {"total": len(results), "prs": results}
+
