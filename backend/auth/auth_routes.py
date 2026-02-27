@@ -21,3 +21,13 @@ def signup(user: UserCreate):
 
     access_token = create_access_token({"sub": user.email})
     return {"access_token": access_token}
+
+# login
+@router.post("/login", response_model=Token)
+def login(user: UserLogin):
+    db_user = get_user_by_email(user.email)
+    if not db_user or not pwd_context.verify(user.password, db_user["password"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+
+    access_token = create_access_token({"sub": user.email})
+    return {"access_token": access_token}
