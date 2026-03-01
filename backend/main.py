@@ -1,12 +1,12 @@
 # backend/main.py
 from fastapi import FastAPI, Request, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from .analysis_engine.analyzer import analyze_code
 from .analysis_engine.llm_service import review_with_llm
 from .analysis_engine.tasks import process_pr
 from .github_service.github_service import get_pr_files, post_pr_comment
 from .schemas.schemas import CodeRequest, PRRequest
 from .db_service.query import get_pr_history
-from fastapi.middleware.cors import CORSMiddleware
 from .auth.subscription import validate_usage
 from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token
