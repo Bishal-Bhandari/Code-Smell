@@ -12,6 +12,8 @@ from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token
 
 app = FastAPI()
+# Auth routes
+app.include_router(auth_router, prefix="/auth", tags=["Auth"]) 
 
 app.add_middleware(
     CORSMiddleware,
@@ -86,13 +88,11 @@ async def github_webhook(request: Request):
 
     return {"status": "Task queued"}
 
-# Auth routes
-app.include_router(auth_router, prefix="/auth", tags=["auth"])
+
 # Dashboard Endpoint 
 @app.get("/dashboard/pr-history/{owner}/{repo}")
-def dashboard_pr_history(owner: str, repo: str, limit: int = 10, user=Depends(verify_token)):
-    # check subscription and usage
-    validate_usage(user)  
-    results = get_pr_history(owner, repo, limit)
-    return {"total": len(results), "prs": results}
+def dashboard_pr_history(owner: str, repo: str, user=Depends(verify_token)):
+    validate_usage(user)
+    results = get_pr_history(owner, repo)
+    return {"prs": results}
 
