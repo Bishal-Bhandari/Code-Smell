@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 class CodeRequest(BaseModel):
     code: str
@@ -13,9 +13,11 @@ class UserBase(BaseModel):
     email: str
 
 class UserCreate(UserBase):
+    email: EmailStr
     password: str
 
 class UserLogin(UserBase):
+    email: EmailStr
     password: str
 
 # jwt token
