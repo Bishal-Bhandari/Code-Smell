@@ -9,5 +9,4 @@ celery = Celery(
 )
 
 # Autodiscover tasks inside analysis_engine folder
-# "analysis_engine.tasks" must be importable from this file
 celery.autodiscover_tasks(["backend.analysis_engine.tasks"])
