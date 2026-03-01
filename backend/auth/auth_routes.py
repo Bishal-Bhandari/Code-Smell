@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from passlib.context import CryptContext
-from schemas.schemas import UserCreate, UserLogin, Token
-from auth.models import create_user, get_user_by_email
-from auth.dependencies import create_access_token
+from backend.schemas.schemas import UserCreate, UserLogin, Token
+from backend.auth.models import create_user, get_user_by_email
+from backend.auth.dependencies import create_access_token
 import secrets
 
 router = APIRouter()

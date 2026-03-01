@@ -1,4 +1,4 @@
-from db_service.db import db
+from backend.db_service.db import db
 from datetime import datetime
 from bson import ObjectId
 

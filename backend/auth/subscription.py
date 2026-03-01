@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from auth.models import increment_usage
+from backend.auth.models import increment_usage
 
 def validate_usage(user):
     if user["subscription"] == "free" and user["usage_count"] >= 10:
