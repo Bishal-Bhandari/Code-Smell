@@ -1,47 +1,30 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
+import API from "../services/api";
+import Layout from "../components/Layout";
 import PRTable from "../components/PRTable";
 
 export default function Dashboard() {
-  const [owner, setOwner] = useState("bishal");
-  const [repo, setRepo] = useState("ai-code-reviewer");
-  const [prs, setPRs] = useState([]);
-
-  const fetchData = async () => {
-    try {
-      const res = await axios.get(
-        `http://localhost:8000/dashboard/pr-history/${owner}/${repo}`
-      );
-      setPRs(res.data.prs);
-    } catch (err) {
-      console.error("Error fetching PRs:", err);
-      setPRs([]);
-    }
-  };
+  const [prs, setPrs] = useState([]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await API.get(
+          "/dashboard/pr-history/Bishal-Bhandari/Dynamic-Real-Time-Path-Re-Planner"
+        );
+        setPrs(res.data.prs);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     fetchData();
   }, []);
 
   return (
-    <div>
-      <h1>PR Dashboard</h1>
-      <div style={{ marginBottom: "1rem" }}>
-        <input
-          type="text"
-          placeholder="Owner"
-          value={owner}
-          onChange={(e) => setOwner(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Repo"
-          value={repo}
-          onChange={(e) => setRepo(e.target.value)}
-        />
-        <button onClick={fetchData}>Load PRs</button>
-      </div>
+    <Layout>
+      <h1 className="text-3xl font-bold mb-6">PR Dashboard</h1>
       <PRTable prs={prs} />
-    </div>
+    </Layout>
   );
 }
