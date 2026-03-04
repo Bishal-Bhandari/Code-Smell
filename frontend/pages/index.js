@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import API from "../services/api";
 import Layout from "../components/Layout";
 import PRTable from "../components/PRTable";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 export default function Dashboard() {
   const [prs, setPrs] = useState([]);
@@ -9,9 +10,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await API.get(
-          "/dashboard/pr-history/Bishal-Bhandari/Dynamic-Real-Time-Path-Re-Planner"
-        );
+        const res = await API.get("/dashboard/my-prs");
         setPrs(res.data.prs);
       } catch (err) {
         console.log(err);
@@ -22,9 +21,11 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <Layout>
-      <h1 className="text-3xl font-bold mb-6">PR Dashboard</h1>
-      <PRTable prs={prs} />
-    </Layout>
+    <ProtectedRoute>
+      <Layout>
+        <h1 className="text-3xl font-bold mb-6">My PR Dashboard</h1>
+        <PRTable prs={prs} />
+      </Layout>
+    </ProtectedRoute>
   );
 }
