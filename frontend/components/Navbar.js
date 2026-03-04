@@ -6,8 +6,9 @@ export default function Navbar() {
       <h1 className="text-xl font-bold">AI Code Reviewer</h1>
       <div className="space-x-6">
         <Link href="/">Dashboard</Link>
+        <Link href="/api-keys">API Keys</Link>
+        <Link href="/settings">Subscription</Link>
         <Link href="/login">Login</Link>
-        <Link href="/signup">Signup</Link>
       </div>
     </nav>
   );
