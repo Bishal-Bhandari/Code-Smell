@@ -16,3 +16,8 @@ def analyze_code(code: str):
 
     except Exception as e:
         return {"error": str(e)}
+    
+async def analyze_pr(repo_url: str, pr_number: int):
+    return {
+        "message": f"Analyzed PR {pr_number} from {repo_url}"
+    }
