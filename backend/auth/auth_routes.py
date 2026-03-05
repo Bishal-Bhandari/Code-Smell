@@ -10,7 +10,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 @router.post("/signup", response_model=Token)
 def signup(user: UserCreate):
-
+    
     existing = get_user_by_email(user.email)
     if existing:
         raise HTTPException(status_code=400, detail="Email already exists")
