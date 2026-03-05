@@ -1,8 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from passlib.context import CryptContext
 from backend.schemas.schemas import UserCreate, UserLogin, Token
 from backend.auth.models import create_user, get_user_by_email
-from backend.auth.dependencies import create_access_token
+from backend.auth.dependencies import create_access_token, get_current_user
 import secrets
 
 router = APIRouter()
@@ -32,3 +32,12 @@ def login(user: UserLogin):
 
     token = create_access_token({"sub": user.email})
     return {"access_token": token}
+
+@router.get("/me")
+async def get_me(current_user=Depends(get_current_user)):
+    return {
+        "email": current_user["email"],
+        "subscription": current_user.get("subscription", "free"),
+        "usage_count": current_user.get("usage_count", 0),
+        "usage_reset_date": current_user.get("usage_reset_date"),
+    }
