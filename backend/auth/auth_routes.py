@@ -3,6 +3,7 @@ from passlib.context import CryptContext
 from backend.schemas.schemas import UserCreate, UserLogin, Token
 from backend.auth.models import create_user, get_user_by_email
 from backend.auth.dependencies import create_access_token, get_current_user
+from backend.services.api_key_service import generate_api_key
 import secrets
 
 router = APIRouter()
@@ -41,3 +42,10 @@ async def get_me(current_user=Depends(get_current_user)):
         "usage_count": current_user.get("usage_count", 0),
         "usage_reset_date": current_user.get("usage_reset_date"),
     }
+
+@router.post("/generate-api-key")
+def create_api_key(current_user: dict = Depends(get_current_user)):
+
+    key = generate_api_key(current_user["user_id"])
+
+    return {"api_key": key}
