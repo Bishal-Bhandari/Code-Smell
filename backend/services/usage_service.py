@@ -1,25 +1,48 @@
-from datetime import datetime, timedelta
-from fastapi import HTTPException
-
-FREE_LIMIT = 50
-PRO_LIMIT = 999999
+from datetime import datetime
+from backend.models.user_model import usage_collection
+from backend.config.config import FREE_PLAN_LIMIT, PRO_PLAN_LIMIT
 
 
-def check_and_update_usage(user: dict):
-    now = datetime.utcnow()
+def get_current_month():
+    return datetime.utcnow().strftime("%Y-%m")
 
-    # reset usage monthly
-    if not user.get("usage_reset_date") or user["usage_reset_date"] < now:
-        user["usage_count"] = 0
-        user["usage_reset_date"] = now + timedelta(days=30)
 
-    # determine limit
-    limit = FREE_LIMIT if user["subscription"] == "free" else PRO_LIMIT
+def get_usage(user_id):
+    month = get_current_month()
 
-    if user["usage_count"] >= limit:
-        raise HTTPException(status_code=403, detail="Usage limit exceeded")
+    usage = usage_collection.find_one({
+        "user_id": user_id,
+        "month": month
+    })
 
-    # increase usage count
-    user["usage_count"] += 1
+    if not usage:
+        usage_collection.insert_one({
+            "user_id": user_id,
+            "month": month,
+            "pr_reviews": 0
+        })
 
-    return user
+        return 0
+
+    return usage["pr_reviews"]
+
+
+def increment_usage(user_id):
+    month = get_current_month()
+
+    usage_collection.update_one(
+        {"user_id": user_id, "month": month},
+        {"$inc": {"pr_reviews": 1}}
+    )
+
+
+def check_limit(user):
+    usage = get_usage(user["user_id"])
+
+    if user["subscription"] == "pro":
+        return True
+
+    if usage >= FREE_PLAN_LIMIT:
+        return False
+
+    return True
