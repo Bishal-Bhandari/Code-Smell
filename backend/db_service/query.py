@@ -1,6 +1,7 @@
 from backend.db_service.db import pr_collection
 from bson import ObjectId
 from datetime import datetime
+from backend.db_service.db import db
 
 def serialize_pr(pr_doc):
     return {
@@ -19,3 +20,8 @@ def get_pr_history(owner: str, repo: str, limit: int = 10):
     ).sort("timestamp", -1).limit(limit)
 
     return [serialize_pr(pr) for pr in results]
+
+
+def get_pr_history_for_user(email):
+    pr_collection = db["pr_analyses"]
+    return list(pr_collection.find({"owner": email}))
