@@ -10,6 +10,7 @@ from .db_service.query import get_pr_history
 from .auth.subscription import validate_usage
 from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token
+from .db_service.query import get_pr_history_for_user
 
 app = FastAPI()
 # Auth routes
@@ -96,3 +97,8 @@ def dashboard_pr_history(owner: str, repo: str, user=Depends(verify_token)):
     results = get_pr_history(owner, repo)
     return {"prs": results}
 
+@app.get("/dashboard/my-prs")
+def dashboard_my_prs(user=Depends(verify_token)):
+    # Fetch PRs for the logged-in user
+    results = get_pr_history_for_user(user["email"])
+    return {"prs": results}
