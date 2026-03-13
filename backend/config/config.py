@@ -10,3 +10,7 @@ MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 JWT_SECRET = os.getenv("JWT_SECRET", "supersecretkey")
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRE_MINUTES = 60
+
+# for user limit
+FREE_PLAN_LIMIT = 50
+PRO_PLAN_LIMIT = 999999
