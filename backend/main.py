@@ -10,7 +10,7 @@ from .db_service.query import get_pr_history, get_usage_count
 from .auth.subscription import validate_usage
 from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token
-from .db_service.query import get_pr_history_for_user, verify_token
+from .db_service.query import get_pr_history_for_user
 from .auth.subscription import get_user_limit
 
 
