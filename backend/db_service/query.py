@@ -26,7 +26,7 @@ def get_pr_history_for_user(email):
     pr_collection = db["pr_analyses"]
     return list(pr_collection.find({"owner": email}))
 
-# Usage tracking functions
+# Usage tracking functions 
 def get_usage_count(user_email):
     collection = db["usage"]
     usage = collection.find_one({"email": user_email})
