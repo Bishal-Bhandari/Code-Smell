@@ -1,8 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from passlib.context import CryptContext
 from backend.schemas.schemas import UserCreate, UserLogin, Token
 from backend.auth.models import create_user, get_user_by_email
-from backend.auth.dependencies import create_access_token
+from backend.auth.dependencies import create_access_token, verify_token
+from backend.db_service.db import db
 import secrets
 
 router = APIRouter()
@@ -32,3 +33,16 @@ def login(user: UserLogin):
 
     token = create_access_token({"sub": user.email})
     return {"access_token": token}
+
+
+@router.post("/generate-api-key")
+def generate_api_key(user=Depends(verify_token)):
+
+    api_key = secrets.token_hex(32)
+
+    db.users.update_one(
+        {"email": user["email"]},
+        {"$set": {"api_key": api_key}}
+    )
+
+    return {"api_key": api_key}
