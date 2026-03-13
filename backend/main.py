@@ -6,11 +6,13 @@ from .analysis_engine.llm_service import review_with_llm
 from .analysis_engine.tasks import process_pr
 from .github_service.github_service import get_pr_files, post_pr_comment
 from .schemas.schemas import CodeRequest, PRRequest
-from .db_service.query import get_pr_history
+from .db_service.query import get_pr_history, get_usage_count
 from .auth.subscription import validate_usage
 from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token
-from .db_service.query import get_pr_history_for_user
+from .db_service.query import get_pr_history_for_user, verify_token
+from .auth.subscription import get_user_limit
+
 
 app = FastAPI()
 # Auth routes
@@ -99,6 +101,14 @@ def dashboard_pr_history(owner: str, repo: str, user=Depends(verify_token)):
 
 @app.get("/dashboard/my-prs")
 def dashboard_my_prs(user=Depends(verify_token)):
-    # Fetch PRs for the logged-in user
-    results = get_pr_history_for_user(user["email"])
-    return {"prs": results}
+
+    prs = get_pr_history_for_user(user["email"])
+
+    usage = get_usage_count(user["email"])
+    limit = get_user_limit(user.get("plan", "free"))
+
+    return {
+        "prs": prs,
+        "usage": usage,
+        "limit": limit
+    }
