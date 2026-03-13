@@ -4,6 +4,8 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from backend.auth.models import get_user_by_email
 from backend.config.config import JWT_ALGORITHM, JWT_SECRET, JWT_EXPIRE_MINUTES
+from backend.auth.subscription import get_user_limit
+from backend.db_service.query import get_usage_count
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -30,3 +32,14 @@ def verify_token(token: str = Depends(oauth2_scheme)):
         raise HTTPException(status_code=401, detail="User not found")
 
     return user
+
+def check_usage(user):
+
+    limit = get_user_limit(user.get("plan", "free"))
+    used = get_usage_count(user["email"])
+
+    if used >= limit:
+        raise HTTPException(
+            status_code=429,
+            detail="Usage limit reached. Upgrade plan."
+        )
