@@ -25,3 +25,23 @@ def get_pr_history(owner: str, repo: str, limit: int = 10):
 def get_pr_history_for_user(email):
     pr_collection = db["pr_analyses"]
     return list(pr_collection.find({"owner": email}))
+
+# Usage tracking functions
+def get_usage_count(user_email):
+    collection = db["usage"]
+    usage = collection.find_one({"email": user_email})
+
+    if not usage:
+        return 0
+
+    return usage["count"]
+
+
+def increment_usage(user_email):
+    collection = db["usage"]
+
+    collection.update_one(
+        {"email": user_email},
+        {"$inc": {"count": 1}},
+        upsert=True
+    )
