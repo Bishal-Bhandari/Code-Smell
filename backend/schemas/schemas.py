@@ -29,3 +29,7 @@ class Token(BaseModel):
 class SubscriptionCheck(BaseModel):
     subscription: str
     usage_count: int
+
+#for api response
+class ApiKeyResponse(BaseModel):
+    api_key: str
