@@ -10,7 +10,7 @@ from .db_service.query import get_pr_history, get_usage_count
 from .auth.subscription import validate_usage
 from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token
-from .db_service.query import get_pr_history_for_user
+from .db_service.query import get_pr_history_for_user, get_user_analytics
 from .auth.subscription import get_user_limit
 
 
@@ -111,4 +111,20 @@ def dashboard_my_prs(user=Depends(verify_token)):
         "prs": prs,
         "usage": usage,
         "limit": limit
+    }
+
+# user analytics endpoint
+@app.get("/dashboard/analytics")
+def dashboard_analytics(user=Depends(verify_token)):
+
+    data = get_user_analytics(user["email"])
+
+    return data
+
+# health check endpoint
+@app.get("/system/health")
+def health_check():
+    return {
+        "status": "running",
+        "service": "ai-code-reviewer"
     }
