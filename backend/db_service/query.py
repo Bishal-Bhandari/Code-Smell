@@ -45,3 +45,23 @@ def increment_usage(user_email):
         {"$inc": {"count": 1}},
         upsert=True
     )
+
+# analytics function to show user activity
+def get_user_analytics(email):
+
+    pr_collection = db["pr_analyses"]
+    usage_collection = db["usage"]
+
+    pr_count = pr_collection.count_documents({"email": email})
+
+    usage = usage_collection.find_one({"email": email})
+
+    if usage:
+        usage_count = usage["count"]
+    else:
+        usage_count = 0
+
+    return {
+        "total_prs": pr_count,
+        "usage": usage_count
+    }
