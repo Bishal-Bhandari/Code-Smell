@@ -2,7 +2,7 @@ from backend.celery_apps.celery_app import celery
 from backend.github_service.github_service import get_pr_files, post_pr_comment
 from backend.analysis_engine.analyzer import analyze_code
 from backend.analysis_engine.llm_service import review_with_llm
-from backend.db_service.db import pr_collection
+from backend.db_service.db import pr_collection, db
 from backend.db_service.query import increment_usage
 from datetime import datetime
 
@@ -50,3 +50,14 @@ def process_pr(user_email, owner, repo_name, pr_number):
 
     # increment usage for subscription tracking
     increment_usage(user_email)
+
+# reset monthly usages count fpr all users
+def reset_monthly_usage():
+    usage_collection = db["usage"]
+
+    usage_collection.update_many(
+        {},
+        {"$set": {"count": 0}}
+    )
+
+    return {"status": "usage reset"}
