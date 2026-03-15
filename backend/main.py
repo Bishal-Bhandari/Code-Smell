@@ -3,7 +3,7 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from .analysis_engine.analyzer import analyze_code
 from .analysis_engine.llm_service import review_with_llm
-from .analysis_engine.tasks import process_pr
+from .analysis_engine.tasks import process_pr, analyze_pr_task
 from .github_service.github_service import get_pr_files, post_pr_comment
 from .schemas.schemas import CodeRequest, PRRequest
 from .db_service.query import get_pr_history, get_usage_count
@@ -74,22 +74,24 @@ def analyze_pr(request: PRRequest):
     }
 
 # GitHub Webhook Endpoint
-@app.post("/webhook")
+@app.post("/webhook/github")
 async def github_webhook(request: Request):
+
     payload = await request.json()
 
-    if payload.get("action") in ["opened", "synchronize"]:
-        pr = payload.get("pull_request")
-        repo = payload.get("repository")
+    action = payload.get("action")
 
-        owner = repo["owner"]["login"]
-        repo_name = repo["name"]
-        pr_number = pr["number"]
+    if action != "opened":
+        return {"status": "ignored"}
 
-        # queue task to celery
-        process_pr.delay(owner, repo_name, pr_number)
+    repo = payload["repository"]["name"]
+    owner = payload["repository"]["owner"]["login"]
 
-    return {"status": "Task queued"}
+    pr_number = payload["pull_request"]["number"]
+
+    analyze_pr_task.delay(owner, repo, pr_number)
+
+    return {"status": "analysis started"}
 
 
 # Dashboard Endpoint 
