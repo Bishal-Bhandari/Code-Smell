@@ -1,9 +1,9 @@
 from backend.celery_apps.celery_app import celery
-from backend.github_service.github_service import get_pr_files, post_pr_comment
+from backend.github_service.github_service import get_pr_files, post_pr_comment, fetch_pr_files
 from backend.analysis_engine.analyzer import analyze_code
 from backend.analysis_engine.llm_service import review_with_llm
 from backend.db_service.db import pr_collection, db
-from backend.db_service.query import increment_usage
+from backend.db_service.query import increment_usage, save_pr_analysis
 from datetime import datetime
 
 
@@ -61,3 +61,22 @@ def reset_monthly_usage():
     )
 
     return {"status": "usage reset"}
+
+# celery beat task to reset usage count
+@celery.task
+def analyze_pr_task(owner, repo, pr_number):
+
+    files = fetch_pr_files(owner, repo, pr_number)
+
+    results = []
+
+    for file in files:
+        analysis = analyze_code(file["patch"])
+        results.append({
+            "file": file["filename"],
+            "analysis": analysis
+        })
+
+    save_pr_analysis(owner, repo, pr_number, results)
+
+    return {"status": "done"}
