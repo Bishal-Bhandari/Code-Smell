@@ -65,3 +65,15 @@ def get_user_analytics(email):
         "total_prs": pr_count,
         "usage": usage_count
     }
+
+# Store PR analysis
+def save_pr_analysis(owner, repo, pr_number, results):
+
+    collection = db["pr_analyses"]
+
+    collection.insert_one({
+        "owner": owner,
+        "repo": repo,
+        "pr_number": pr_number,
+        "results": results
+    })
