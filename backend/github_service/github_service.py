@@ -12,7 +12,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# create github client using token
+# create github client using token for user auth
 def get_github_client():
 
     token = os.getenv("GITHUB_TOKEN")
