@@ -1,5 +1,6 @@
-# backend/main.py
-from fastapi import FastAPI, Request, Depends
+import hmac
+import hashlib
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from .analysis_engine.analyzer import analyze_code
 from .analysis_engine.llm_service import review_with_llm
@@ -15,8 +16,11 @@ from .auth.subscription import get_user_limit
 
 
 app = FastAPI()
+
 # Auth routes
 app.include_router(auth_router, prefix="/auth", tags=["Auth"]) 
+
+GITHUB_SECRET = "webhook_secret"
 
 app.add_middleware(
     CORSMiddleware,
@@ -101,6 +105,7 @@ def dashboard_pr_history(owner: str, repo: str, user=Depends(verify_token)):
     results = get_pr_history(owner, repo)
     return {"prs": results}
 
+
 @app.get("/dashboard/my-prs")
 def dashboard_my_prs(user=Depends(verify_token)):
 
@@ -130,3 +135,16 @@ def health_check():
         "status": "running",
         "service": "ai-code-reviewer"
     }
+
+# secure weebhook endpoint
+def verify_github_signature(payload_body, signature):
+
+    mac = hmac.new(
+        GITHUB_SECRET.encode(),
+        msg=payload_body,
+        digestmod=hashlib.sha256
+    )
+
+    expected = "sha256=" + mac.hexdigest()
+
+    return hmac.compare_digest(expected, signature)
