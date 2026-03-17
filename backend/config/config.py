@@ -3,14 +3,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# for mongoDB
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
+class Settings:
+ 
+    MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 
-# for jwt
-JWT_SECRET = os.getenv("JWT_SECRET", "supersecretkey")
-JWT_ALGORITHM = "HS256"
-JWT_EXPIRE_MINUTES = 60
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
-# for user limit
-FREE_PLAN_LIMIT = 50
-PRO_PLAN_LIMIT = 999999
+    JWT_SECRET = os.getenv("JWT_SECRET", "supersecret")
+    JWT_ALGORITHM = "HS256"
+    JWT_EXPIRE_MINUTES = 60
+
+    FREE_TIER_LIMIT = 50
+    PRO_TIER_LIMIT = 500
+    ENTERPRISE_LIMIT = 5000
+
+settings = Settings()
