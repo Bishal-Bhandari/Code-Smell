@@ -80,3 +80,14 @@ def analyze_pr_task(owner, repo, pr_number):
     save_pr_analysis(owner, repo, pr_number, results)
 
     return {"status": "done"}
+
+#comment builder
+def format_ai_review(results):
+
+    comment = "AI Code Review\n\n"
+    for file in results:
+        comment += f"### {file['file']}\n"
+        comment += file["analysis"]["ai_review"]
+        comment += "\n\n"
+
+    return comment
