@@ -81,6 +81,13 @@ def analyze_pr(request: PRRequest):
 @app.post("/webhook/github")
 async def github_webhook(request: Request):
 
+    signature = request.headers.get("X-Hub-Signature-256")
+
+    body = await request.body()
+
+    if not verify_github_signature(body, signature):
+        raise HTTPException(status_code=401, detail="Invalid signature")
+
     payload = await request.json()
 
     action = payload.get("action")
@@ -88,9 +95,8 @@ async def github_webhook(request: Request):
     if action != "opened":
         return {"status": "ignored"}
 
-    repo = payload["repository"]["name"]
     owner = payload["repository"]["owner"]["login"]
-
+    repo = payload["repository"]["name"]
     pr_number = payload["pull_request"]["number"]
 
     analyze_pr_task.delay(owner, repo, pr_number)
