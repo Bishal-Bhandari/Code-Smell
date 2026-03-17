@@ -10,7 +10,7 @@ from .schemas.schemas import CodeRequest, PRRequest
 from .db_service.query import get_pr_history, get_usage_count
 from .auth.subscription import validate_usage
 from .auth.auth_routes import router as auth_router
-from .auth.dependencies import verify_token
+from .auth.dependencies import verify_token, get_current_user
 from .db_service.query import get_pr_history_for_user, get_user_analytics
 from .auth.subscription import get_user_limit
 from .db_service.db import db
