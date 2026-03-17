@@ -13,6 +13,7 @@ from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token
 from .db_service.query import get_pr_history_for_user, get_user_analytics
 from .auth.subscription import get_user_limit
+from .db_service.db import db
 
 
 app = FastAPI()
@@ -154,3 +155,16 @@ def verify_github_signature(payload_body, signature):
     expected = "sha256=" + mac.hexdigest()
 
     return hmac.compare_digest(expected, signature)
+
+
+# usage analytics API
+@app.get("/dashboard/analytics")
+def analytics(user=Depends(get_current_user)):
+
+    collection = db["pr_analyses"]
+
+    total = collection.count_documents({"user_id": user["id"]})
+
+    return {
+        "total_reviews": total
+    }
