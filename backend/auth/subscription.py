@@ -1,16 +1,28 @@
-from fastapi import HTTPException
-from backend.auth.models import increment_usage
-from backend.config.config import FREE_PLAN_LIMIT, PRO_PLAN_LIMIT
+from backend.db_service.db import db
+from config.config import settings
 
-def validate_usage(user):
-    if user["subscription"] == "free" and user["usage_count"] >= 10:
-        raise HTTPException(status_code=403, 
-                            detail="Free plan limit reached")
 
-    increment_usage(user["_id"])
+def get_user_usage(user_id):
 
-#user plan limits
-def get_user_limit(plan: str):
-    if plan == "pro":
-        return PRO_PLAN_LIMIT
-    return FREE_PLAN_LIMIT
+    collection = db["pr_analyses"]
+
+    return collection.count_documents({"user_id": user_id})
+
+
+def check_usage_limit(user):
+
+    usage = get_user_usage(user["id"])
+
+    if user["subscription"] == "free":
+        limit = settings.FREE_TIER_LIMIT
+
+    elif user["subscription"] == "pro":
+        limit = settings.PRO_TIER_LIMIT
+
+    else:
+        limit = settings.ENTERPRISE_LIMIT
+
+    if usage >= limit:
+        raise Exception("Usage limit exceeded")
+
+    return True
