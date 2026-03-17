@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Header
 from fastapi.security import OAuth2PasswordBearer
 from backend.auth.models import get_user_by_email
 from backend.config.config import JWT_ALGORITHM, JWT_SECRET, JWT_EXPIRE_MINUTES
 from backend.auth.subscription import get_user_limit
 from backend.db_service.query import get_usage_count
+from backend.db_service.db import db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
@@ -43,3 +44,15 @@ def check_usage(user):
             status_code=429,
             detail="Usage limit reached. Upgrade plan."
         )
+    
+async def verify_api_key(x_api_key: str = Header(None)):
+
+    if not x_api_key:
+        raise HTTPException(status_code=401, detail="API key missing")
+
+    user = db["users"].find_one({"api_key": x_api_key})
+
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid API key")
+
+    return user
