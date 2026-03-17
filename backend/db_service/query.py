@@ -77,3 +77,20 @@ def save_pr_analysis(owner, repo, pr_number, results):
         "pr_number": pr_number,
         "results": results
     })
+
+def save_user_repo(user_id, owner, repo):
+
+    collection = db["repos"]
+
+    collection.insert_one({
+        "user_id": user_id,
+        "owner": owner,
+        "repo": repo
+    })
+
+
+def get_user_repos(user_id):
+
+    collection = db["repos"]
+
+    return list(collection.find({"user_id": user_id}))
