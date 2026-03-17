@@ -2,8 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from passlib.context import CryptContext
 from backend.schemas.schemas import UserCreate, UserLogin, Token
 from backend.auth.models import create_user, get_user_by_email
-from backend.auth.dependencies import create_access_token, verify_token
+from backend.auth.dependencies import create_access_token, verify_token, get_current_user
 from backend.db_service.db import db
+from backend.db_service.query import save_user_repo
 import secrets
 
 router = APIRouter()
@@ -46,3 +47,11 @@ def generate_api_key(user=Depends(verify_token)):
     )
 
     return {"api_key": api_key}
+
+
+@router.post("/register-repo")
+def register_repo(owner: str, repo: str, user=Depends(get_current_user)):
+
+    save_user_repo(user["id"], owner, repo)
+
+    return {"message": "Repository registered"}
