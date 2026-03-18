@@ -1,10 +1,14 @@
 import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar />
-      <div className="p-8">{children}</div>
+    <div className="flex h-screen bg-slate-900">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <Navbar />
+        <main className="p-6 overflow-y-auto">{children}</main>
+      </div>
     </div>
   );
 }
