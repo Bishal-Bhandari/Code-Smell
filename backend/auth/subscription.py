@@ -26,3 +26,11 @@ def check_usage_limit(user):
         raise Exception("Usage limit exceeded")
 
     return True
+
+def get_user_limit(plan: str):
+    if plan == "free":
+        return settings.FREE_TIER_LIMIT
+    elif plan == "pro":
+        return settings.PRO_TIER_LIMIT
+    else:
+        return settings.ENTERPRISE_LIMIT

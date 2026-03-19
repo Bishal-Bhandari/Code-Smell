@@ -7,9 +7,22 @@ export default function Repos() {
   const [repo, setRepo] = useState("");
 
   const addRepo = async () => {
-    await API.post(`/auth/register-repo?owner=${owner}&repo=${repo}`);
-    alert("Repo added!");
-  };
+  const token = localStorage.getItem("token");  // ✅ define here
+
+  console.log("TOKEN:", token);
+
+  await API.post(
+    `/auth/register-repo?owner=${owner}&repo=${repo}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  alert("Repo added!");
+};
 
   return (
     <Layout>

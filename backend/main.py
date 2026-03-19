@@ -8,11 +8,10 @@ from .analysis_engine.tasks import process_pr, analyze_pr_task
 from .github_service.github_service import get_pr_files, post_pr_comment
 from .schemas.schemas import CodeRequest, PRRequest
 from .db_service.query import get_pr_history, get_usage_count
-from .auth.subscription import validate_usage
+from .auth.subscription import check_usage_limit, get_user_limit
 from .auth.auth_routes import router as auth_router
 from .auth.dependencies import verify_token, get_current_user
 from .db_service.query import get_pr_history_for_user, get_user_analytics
-from .auth.subscription import get_user_limit
 from .db_service.db import db
 
 
@@ -107,14 +106,14 @@ async def github_webhook(request: Request):
 
 # Dashboard Endpoint 
 @app.get("/dashboard/pr-history/{owner}/{repo}")
-def dashboard_pr_history(owner: str, repo: str, user=Depends(verify_token)):
-    validate_usage(user)
+def dashboard_pr_history(owner: str, repo: str, user=Depends(get_current_user)):
+    check_usage_limit(user)
     results = get_pr_history(owner, repo)
     return {"prs": results}
 
 
 @app.get("/dashboard/my-prs")
-def dashboard_my_prs(user=Depends(verify_token)):
+def dashboard_my_prs(user=Depends(get_current_user)):
 
     prs = get_pr_history_for_user(user["email"])
 
@@ -129,7 +128,7 @@ def dashboard_my_prs(user=Depends(verify_token)):
 
 # user analytics endpoint
 @app.get("/dashboard/analytics")
-def dashboard_analytics(user=Depends(verify_token)):
+def dashboard_analytics(user=Depends(get_current_user)):
 
     data = get_user_analytics(user["email"])
 
@@ -146,6 +145,9 @@ def health_check():
 # secure weebhook endpoint
 def verify_github_signature(payload_body, signature):
 
+    if signature is None:
+        return False  
+
     mac = hmac.new(
         GITHUB_SECRET.encode(),
         msg=payload_body,
@@ -155,16 +157,3 @@ def verify_github_signature(payload_body, signature):
     expected = "sha256=" + mac.hexdigest()
 
     return hmac.compare_digest(expected, signature)
-
-
-# usage analytics API
-@app.get("/dashboard/analytics")
-def analytics(user=Depends(get_current_user)):
-
-    collection = db["pr_analyses"]
-
-    total = collection.count_documents({"user_id": user["id"]})
-
-    return {
-        "total_reviews": total
-    }
