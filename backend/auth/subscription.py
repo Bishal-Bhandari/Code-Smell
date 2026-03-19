@@ -1,5 +1,5 @@
 from backend.db_service.db import db
-from config.config import settings
+from backend.config.config import settings
 
 
 def get_user_usage(user_id):
