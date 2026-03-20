@@ -34,6 +34,7 @@ def verify_token(token: str = Depends(oauth2_scheme)):
 
     return user
 
+
 def check_usage(user):
 
     limit = get_user_limit(user.get("plan", "free"))
@@ -44,7 +45,7 @@ def check_usage(user):
             status_code=429,
             detail="Usage limit reached. Upgrade plan."
         )
-    
+# for verifying api
 async def verify_api_key(x_api_key: str = Header(None)):
 
     if not x_api_key:
@@ -57,6 +58,7 @@ async def verify_api_key(x_api_key: str = Header(None)):
 
     return user
 
+# For dashboard endpoints
 def get_current_user(token: str = Depends(oauth2_scheme)):
 
     try:
