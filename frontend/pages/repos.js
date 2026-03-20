@@ -7,7 +7,7 @@ export default function Repos() {
   const [repo, setRepo] = useState("");
 
   const addRepo = async () => {
-  const token = localStorage.getItem("token");  // ✅ define here
+  const token = localStorage.getItem("token");
 
   console.log("TOKEN:", token);
 
