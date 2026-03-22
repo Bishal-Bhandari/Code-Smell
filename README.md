@@ -1,240 +1,167 @@
-# AI Code Review & Technical Debt Analyzer
 
-![Python](https://img.shields.io/badge/Python-3.11-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-Analysis%20Engine-teal)
-![React](https://img.shields.io/badge/React-Frontend-61DAFB)
-![MongoDB](https://img.shields.io/badge/MongoDB-Database-brightgreen)
-![Redis](https://img.shields.io/badge/Redis-Queue-red)
-![Docker](https://img.shields.io/badge/Docker-Containerized-blue)
-![Kubernetes](https://img.shields.io/badge/Kubernetes-Scalable-326CE5)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+# 🚀 AI Code Reviewer SaaS Platform
 
-> AI-powered code review assistant that detects code smells, security risks, and technical debt — and automatically comments on Pull Requests.
+An AI-powered SaaS platform that automates **Pull Request (PR) reviews** using **static code analysis + LLM-based insights**, built with a production-grade architecture.
 
 ---
 
-# Problem
+## 💡 Features
 
-- Low-quality code gets merged
-- Security issues go unnoticed
-- Technical debt accumulates silently
-- Manual code reviews are slow and inconsistent
-
----
-
-# Solution
-
-An intelligent, distributed system that:
-
-- Connects to GitHub repositories
-- Analyzes Pull Requests or commits
-- Detects code smells & security risks
-- Calculates technical debt score
-- Generates AI review comments
-- Automatically comments on PRs
-- Produces quality badges
+- ✅ Static Code Analysis (AST + Complexity)
+- 🤖 AI Code Review (LLM suggestions)
+- 🔄 GitHub PR Integration (auto comments)
+- 📊 Dashboard for PR analytics
+- 🔐 JWT Authentication & API Keys
+- 📈 Usage Limits (Free / Pro tiers)
+- ⚡ Async Processing with Celery
 
 ---
 
-# System Architecture
-
-## High-Level Architecture
-
-```mermaid
-flowchart LR
-    A[React Dashboard] --> B[Django API Gateway]
-    B --> C[GitHub OAuth]
-    B --> D[Redis Queue]
-    D --> E[FastAPI Code Analysis Engine]
-    E --> F[MongoDB]
-    E --> G[LLM API]
-    D --> H[Celery Worker]
-    H --> E
-    E --> I[GitHub PR Comment Bot]
-```
-
----
-
-## Microservices Architecture
-
-```mermaid
-flowchart TB
-    subgraph Frontend
-        A1[React + Tailwind]
-    end
-
-    subgraph Backend
-        B1[FastAPI - Auth + Repo Management]
-        B2[FastAPI - Code Analyzer]
-        B3[Celery Worker]
-        B4[Redis]
-        B5[MongoDB]
-    end
-
-    subgraph External Services
-        C1[GitHub API]
-        C2[LLM Provider]
-    end
-
-    A1 --> B1
-    B1 --> C1
-    B1 --> B4
-    B4 --> B3
-    B3 --> B2
-    B2 --> B5
-    B2 --> C2
-    B2 --> C1
-```
-
----
-
-# Intelligence Layer
-
-## 1️ Static Code Analysis
-
-- AST parsing (Python)
-- Cyclomatic complexity
-- Nesting depth
-- LOC analysis
-- Code duplication detection
-- Hardcoded secret detection
-- Pattern-based smell detection
-
----
-
-## 2️ LLM-Based Smart Review
-
-Each function is analyzed by an LLM for:
-
-- Code smells
-- Security risks
-- Optimization opportunities
-- Refactoring suggestions
-- Maintainability improvements
-
-Structured JSON output ensures consistency.
-
----
-
-## 3️ ML-Based Risk Scoring
-
-Model classifies code as:
-
-- Clean
-- Moderate Risk
-- High Risk
-
-Features used:
-
-- Cyclomatic complexity
-- Lines of code
-- Security keyword density
-- AI-detected smell count
-- Dependency depth
-
-Outputs:
-
-- Technical Debt Score (0–10)
-- Security Score
-- Quality Grade (A–F)
-
----
-
-# GitHub Integration
-
-- GitHub OAuth authentication
-- Pull Request scanning
-- Inline AI review comments
-- Status check reporting
-- README quality badge generation
-- Webhook automation
-
----
-
-# Example Output
-
-```json
-{
-  "file": "auth.py",
-  "cyclomatic_complexity": 18,
-  "security_score": 0.72,
-  "ai_comments": [
-    "Function login() is too complex",
-    "Possible SQL injection risk",
-    "Consider extracting validation logic"
-  ],
-  "technical_debt_score": 7.4,
-  "quality_grade": "B"
-}
-```
-
----
-
-# Database Schema (MongoDB)
-
-```json
-{
-  "repo": "ai-reviewer",
-  "branch": "main",
-  "commit_sha": "abc123",
-  "analysis_type": "PR",
-  "timestamp": "ISODate",
-  "files": [],
-  "total_debt_score": 7.8,
-  "security_score": 0.6,
-  "quality_grade": "B"
-}
-```
-
----
-
-# Dashboard Features
-
-- Repository overview
-- Technical debt trend
-- Security trend
-- Complexity heatmap
-- PR drilldown analysis
-- Organization-level analytics
-
----
-
-# Tech Stack
-
-### Frontend
-- React
-- TailwindCSS
+## 🧱 Tech Stack
 
 ### Backend
-- Django (Auth + GitHub OAuth)
-- FastAPI (Code Analysis Engine)
-- Celery
-- Redis
+- FastAPI
+- Celery + Redis
 - MongoDB
 
-### AI & ML
-- LLM API integration
-- AST parsing
-- Scikit-learn (Risk Scoring Model)
+### Frontend
+- Next.js
+- Tailwind CSS
+
+### AI & Analysis
+- OpenAI API
+- Radon (Cyclomatic Complexity)
+- Python AST
 
 ### DevOps
-- Docker
-- Docker Compose
-- Kubernetes
-- CI/CD Integration
+- Docker & Docker Compose
+- Ngrok (Webhook testing)
 
 ---
 
-# Local Development
+## 📁 Project Structure
 
-```bash
-git clone https://github.com/yourusername/ai-code-reviewer.git
-cd ai-code-reviewer
-cp .env.example .env
-docker-compose up --build
 ```
 
-Open:
+backend/
+├── analysis_engine/
+├── auth/
+├── celery_apps/
+├── config/
+├── db_services/
+├── github_service/
+├── schemas/
+└── main.py
+
+frontend/
+docker-compose.yml
+
+````
+
+---
+
+# ⚙️ Setup Instructions
+
+---
+
+## 🔹 1. Clone Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/ai-code-reviewer.git
+cd ai-code-reviewer
+````
+
+---
+
+## 🔹 2. Backend Setup
+
+### Create Virtual Environment
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate   # Linux/Mac
+.venv\Scripts\activate      # Windows
+```
+
+---
+
+### Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+If no requirements file:
+
+```bash
+pip install fastapi uvicorn pymongo python-dotenv celery redis passlib[bcrypt] python-jose requests PyGithub radon openai
+```
+
+---
+
+## 🔹 3. Environment Variables
+
+Create `.env` inside `backend/`:
+
+```env
+OPENAI_API_KEY=your_openai_key
+GITHUB_TOKEN=your_github_token
+SECRET_KEY=your_secret_key
+```
+
+---
+
+## 🔹 4. Run Services (Docker)
+
+From **project root**:
+
+```bash
+docker compose up -d
+```
+
+This starts:
+
+* MongoDB
+* Redis
+
+---
+
+## 🔹 5. Run Backend
+
+```bash
+cd backend
+uvicorn main:app --reload
+```
+
+Access API:
+
+```
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## 🔹 6. Run Celery Worker
+
+Open new terminal:
+
+```bash
+cd backend
+celery -A celery_apps.celery_app worker --loglevel=info
+```
+
+---
+
+## 🔹 7. Frontend Setup
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Access frontend:
 
 ```
 http://localhost:3000
@@ -242,53 +169,163 @@ http://localhost:3000
 
 ---
 
-# Production Deployment
-
-- Kubernetes cluster deployment
-- Horizontal Pod Autoscaling
-- Queue-based distributed processing
-- GitHub webhook automation
-- CI/CD pipeline integration
+# 🌐 GitHub Webhook Setup (Ngrok)
 
 ---
 
-# Advanced Features
+## 🔹 1. Start Ngrok
 
-- Automatic PR inline comments
-- AI-generated refactoring suggestions
-- CI/CD failure thresholds
-- Code Quality Badge generation
-- Multi-repository support
-- Developer performance insights
+```bash
+ngrok http 8000
+```
 
----
+Copy URL like:
 
-# Roadmap
-
-- [ ] Multi-language support (Python, JS, Java)
-- [ ] Semantic code similarity detection
-- [ ] AI-generated auto-refactor PRs
-- [ ] Slack integration
-- [ ] IDE extension
+```
+https://abcd1234.ngrok-free.app
+```
 
 ---
 
-# Why This Project Is Powerful
+## 🔹 2. Add Webhook in GitHub
 
-This project demonstrates:
+Go to:
 
-- Distributed microservices architecture
-- Asynchronous task processing
-- OAuth integration
-- Static code analysis engineering
-- LLM-based contextual reasoning
-- ML risk scoring model
-- Scalable infrastructure design
-- Production containerization
-- DevOps best practices
+```
+Repo → Settings → Webhooks → Add Webhook
+```
+
+Set:
+
+```
+Payload URL:
+https://YOUR_NGROK_URL/webhook/github
+
+Content type:
+application/json
+
+Events:
+Pull Request (opened)
+```
 
 ---
 
-# License
+## 🔹 3. Secret (Optional)
 
-MIT License
+Match this in backend:
+
+```python
+GITHUB_SECRET = "webhook_secret"
+```
+
+---
+
+# 🔄 System Flow
+
+```
+GitHub PR Created
+        ↓
+Webhook Triggered
+        ↓
+FastAPI Receives Event
+        ↓
+Celery Task Queued (Redis)
+        ↓
+Fetch PR Files
+        ↓
+Static Analysis (AST + Radon)
+        ↓
+AI Review (LLM)
+        ↓
+Store Results (MongoDB)
+        ↓
+Post Comment to GitHub PR
+        ↓
+Display in Dashboard
+```
+
+---
+
+# 🧠 Flow Diagram (Architecture)
+
+```
+          ┌───────────────┐
+          │   GitHub PR   │
+          └──────┬────────┘
+                 │ Webhook
+                 ▼
+        ┌──────────────────┐
+        │   FastAPI API    │
+        └──────┬───────────┘
+               │
+               ▼
+        ┌───────────────┐
+        │   Celery      │
+        │   Worker      │
+        └──────┬────────┘
+               │
+   ┌───────────┼────────────┐
+   ▼           ▼            ▼
+Static     AI Review     GitHub API
+Analysis   (LLM)         (Comments)
+   │           │            │
+   └──────┬────┴────────────┘
+          ▼
+     MongoDB
+          ▼
+     Dashboard (Next.js)
+```
+
+---
+
+# 🧪 Testing
+
+### API Testing
+
+* Swagger UI → `/docs`
+
+### Auth Testing
+
+* Signup → Login → Use JWT
+
+### Webhook Testing
+
+* Use Ngrok
+* Create PR → see logs + comments
+
+---
+
+# 🧩 Key Endpoints
+
+| Endpoint                 | Description    |
+| ------------------------ | -------------- |
+| POST /auth/signup        | Register user  |
+| POST /auth/login         | Login          |
+| POST /auth/register-repo | Add repo       |
+| GET /dashboard/my-prs    | User PRs       |
+| GET /dashboard/analytics | Usage stats    |
+| POST /webhook/github     | GitHub webhook |
+
+---
+
+# 🚀 Future Improvements
+
+* Multi-tenant support
+* CI/CD pipeline
+* Kubernetes deployment
+* Advanced ML risk scoring
+* Team collaboration features
+
+---
+
+# 👨‍💻 Author
+
+**Bishal Bhandari**
+
+---
+
+# ⭐ If you like this project
+
+Give it a star ⭐ and share feedback!
+
+```
